@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   build:
-     runs-on: jeremyl-mac
+     runs-on: self-hosted
      env:
       OIDC_AUDIENCE: 'jfrog-github'
       OIDC_PROVIDER: 'github'
@@ -28,6 +28,7 @@ jobs:
          env:  
            JF_URL: ${{ secrets.JF_URL }}
          with:
+           custom-server-id: my-github-config
            oidc-provider-name: ${{ env.OIDC_PROVIDER }}
            oidc-audience: ${{ env.OIDC_AUDIENCE }}           
 
