@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   build:
-     runs-on: self-hosted
+     runs-on: jeremyl-mac
      env:
       OIDC_AUDIENCE: 'jfrog-github'
       OIDC_PROVIDER: 'github'
