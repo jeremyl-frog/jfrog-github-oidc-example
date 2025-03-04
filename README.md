@@ -78,3 +78,4 @@ This example repository is licensed under the [MIT License](LICENSE).
 ---
 
 **Disclaimer**: This example is for educational and illustrative purposes. Ensure you adhere to the terms and conditions of GitHub and JFrog when using their services.
+A line to change for git commit testing.
