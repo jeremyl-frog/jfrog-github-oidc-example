@@ -36,8 +36,11 @@ jobs:
        - name: Set CLI Config
          run: jf npm-config --repo-resolve=$NPM_RESOLVE_REPO --repo-deploy=$NPM_PUBLISH_REPO
          
-       - name: Show RT Servers  
-         run: jf c s
+       - name: Show RT Servers and Set default 
+         run: |
+           jf c s
+           jf c use setup-jfrog-cli-server
+         
            
        - name: Install Dependencies
          run: jf npm install
