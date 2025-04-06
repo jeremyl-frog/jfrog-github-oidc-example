@@ -43,7 +43,7 @@ jobs:
          run: jf c s
            
        - name: Install Dependencies
-         run: jf npm install
+         run: jf npm install --global=true
          
        - name: Publish
          run: jf npm publish
