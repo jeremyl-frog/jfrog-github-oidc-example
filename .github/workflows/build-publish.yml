@@ -34,7 +34,7 @@ jobs:
            oidc-audience: ${{ env.OIDC_AUDIENCE }}           
 
        - name: Set CLI Config
-         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm-config --repo-resolve=$NPM_RESOLVE_REPO --repo-deploy=$NPM_PUBLISH_REPO
+         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm-config --repo-resolve=$NPM_RESOLVE_REPO --repo-deploy=$NPM_PUBLISH_REPO --server-id-resolve setup-jfrog-cli-server --server-id-deploy setup-jfrog-cli-server 
          
        - name: Show RT Servers and Set default 
          run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf c use setup-jfrog-cli-server
@@ -43,7 +43,7 @@ jobs:
          run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf c s
            
        - name: Install Dependencies
-         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm install
+         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm install --server 
          
        - name: Publish
          run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm publish
