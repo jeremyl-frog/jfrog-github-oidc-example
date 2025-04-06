@@ -13,8 +13,7 @@ jobs:
      env:
       OIDC_AUDIENCE: 'jfrog-github'
       OIDC_PROVIDER: 'github'
-      NPM_RESOLVE_REPO: 'eks-npm-remote'
-      NPM_PUBLISH_REPO: 'eks-npm-local'
+      PLATFORM_REPO: 'eks-npm'
      defaults:
       run:
         working-directory: ./package
@@ -34,7 +33,7 @@ jobs:
            oidc-audience: ${{ env.OIDC_AUDIENCE }}           
 
        - name: Set CLI Config
-         run: jf npm-config --repo-resolve=$NPM_RESOLVE_REPO --repo-deploy=$NPM_PUBLISH_REPO
+         run: jf npm-config --repo-resolve=$PLATFORM_REPO --repo-deploy=$PLATFORM_REPO --server-id-resolve setup-jfrog-cli-server --server-id-deploy setup-jfrog-cli-server 
          
        - name: Show RT Servers and Set default 
          run: jf c use setup-jfrog-cli-server
