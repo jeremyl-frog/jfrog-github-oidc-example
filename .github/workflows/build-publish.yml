@@ -33,25 +33,25 @@ jobs:
            oidc-audience: ${{ env.OIDC_AUDIENCE }}           
 
        - name: Set CLI Config
-         run: jf npm-config --repo-resolve=$PLATFORM_REPO --repo-deploy=$PLATFORM_REPO --server-id-resolve setup-jfrog-cli-server --server-id-deploy setup-jfrog-cli-server 
+         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm-config --repo-resolve=$PLATFORM_REPO --repo-deploy=$PLATFORM_REPO --server-id-resolve setup-jfrog-cli-server --server-id-deploy setup-jfrog-cli-server 
          
        - name: Show RT Servers and Set default 
-         run: jf c use setup-jfrog-cli-server
+         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf c use setup-jfrog-cli-server
 
        - name: Show CLI servers
-         run: jf c s
+         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf c s
            
        - name: Install Dependencies
-         run: jf npm install
+         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm install
          
        - name: Publish
-         run: jf npm publish
+         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm publish
          
        - name: Publish Build info With JFrog CLI
          run: |
           # Collect environment variables for the build
-          jf rt build-collect-env
+          /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-collect-env
           # Collect VCS details from git and add them to the build
-          jf rt build-add-git
+          /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-add-git
           # Publish build info
-          jf rt build-publish
+          /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-publish
