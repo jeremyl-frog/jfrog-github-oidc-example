@@ -43,7 +43,7 @@ jobs:
          run: jf c s
            
        - name: Install Dependencies
-         run: jf npm install axios
+         run: jf npm install
          
        - name: Publish
          run: jf npm publish
