@@ -12,7 +12,7 @@ jobs:
      runs-on: self-hosted
      env:
       OIDC_AUDIENCE: 'jfrog-github'
-      OIDC_PROVIDER: 'github'
+      OIDC_PROVIDER: 'jeremyl-github'
       PLATFORM_REPO: 'eks-npm'
      defaults:
       run:
@@ -27,7 +27,7 @@ jobs:
        - name: Setup JFrog CLI
          uses: jfrog/setup-jfrog-cli@v4.5.6
          env:  
-           JF_URL: ${{ secrets.JF_URL }}
+           JF_URL: ${{ secrets.CLOUD_JF_URL }}
          with:
            oidc-provider-name: ${{ env.OIDC_PROVIDER }}
            oidc-audience: ${{ env.OIDC_AUDIENCE }}           
