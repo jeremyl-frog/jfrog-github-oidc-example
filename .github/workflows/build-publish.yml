@@ -13,7 +13,8 @@ jobs:
      env:
       OIDC_AUDIENCE: 'jfrog-github'
       OIDC_PROVIDER: 'github'
-      PLATFORM_REPO: 'eks-npm'
+      NPM_RESOLVE_REPO: 'eks-npm'
+      NPM_PUBLISH_REPO: 'eks-npm-local'
      defaults:
       run:
         working-directory: ./package
@@ -33,7 +34,7 @@ jobs:
            oidc-audience: ${{ env.OIDC_AUDIENCE }}           
 
        - name: Set CLI Config
-         run: jf npm-config --repo-resolve=$PLATFORM_REPO --repo-deploy=$PLATFORM_REPO
+         run: jf npm-config --repo-resolve=$NPM_RESOLVE_REPO --repo-deploy=$NPM_PUBLISH_REPO
            
        - name: Install Dependencies
          run: jf npm install
