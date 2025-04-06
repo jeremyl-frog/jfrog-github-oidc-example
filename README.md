@@ -73,7 +73,7 @@ Feel free to contribute to this example by creating issues or pull requests. You
 
 ## License
 
-This example repository is licensed under the [MIT License](LICENSE).
+This example repository is licensed under the [MIT License](LICENSE).1234
 
 ---
 
