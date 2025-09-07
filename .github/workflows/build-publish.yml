@@ -1,76 +1,75 @@
+
 name: "JFrog-GitHub NPM Publish OIDC Integration"
 on: push
 
+# This is required as per
+# https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-cloud-providers#adding-permissions-settings
 permissions:
   id-token: write
 
 jobs:
   build:
-    runs-on: self-hosted
-    env:
+     #runs-on: ubuntu-latest
+     runs-on: self-hosted
+     env:
       OIDC_AUDIENCE: 'jfrog-github'
       OIDC_PROVIDER: 'jeremyl-github'
       PLATFORM_REPO: 'eks-npm'
-    defaults:
+     defaults:
       run:
         working-directory: ./package
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v3
+              
+       - name: Setup Node npm
+         uses: actions/setup-node@v3
 
-      - name: Setup Node npm
-        uses: actions/setup-node@v3
+       - name: Get and inspect OIDC token
+         run: |
+           # Fetch token from GitHub OIDC endpoint
+           ID_TOKEN=$(curl -sLS -H "User-Agent: actions/oidc-client" \
+             -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=$OIDC_AUDIENCE" | jq -r .value)
+           
+           # Save token to environment variable for later steps
+           echo "ID_TOKEN=$ID_TOKEN" >> $GITHUB_ENV
+           
+           # Decode JWT payload to inspect claims
+           PAYLOAD=$(echo "$ID_TOKEN" | cut -d '.' -f2 | base64 --decode | jq '.')
+           echo "Decoded OIDC claims:"
+           echo "$PAYLOAD"
+         env:
+           OIDC_AUDIENCE: ${{ env.OIDC_AUDIENCE }}
+         
+       - name: Setup JFrog CLI
+         uses: jfrog/setup-jfrog-cli@v4.5.6
+         env:  
+           JF_URL: ${{ secrets.CLOUD_JF_URL }}
+         with:
+           oidc-provider-name: ${{ env.OIDC_PROVIDER }}
+           oidc-audience: ${{ env.OIDC_AUDIENCE }}           
 
-      - name: Get GitHub OIDC token
-        run: |
-          ID_TOKEN=$(curl -sLS -H "User-Agent: actions/oidc-client" \
-            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=$OIDC_AUDIENCE" | jq -r .value)
-          echo "ID_TOKEN=$ID_TOKEN" >> $GITHUB_ENV
-          PAYLOAD=$(echo "$ID_TOKEN" | cut -d '.' -f2 | base64 --decode | jq '.')
-          echo "Decoded OIDC claims:"
-          echo "$PAYLOAD"
-        env:
-          OIDC_AUDIENCE: ${{ env.OIDC_AUDIENCE }}
+       - name: Set CLI Config
+         run: /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm-config --repo-resolve=$PLATFORM_REPO --repo-deploy=$PLATFORM_REPO --server-id-resolve setup-jfrog-cli-server --server-id-deploy setup-jfrog-cli-server 
+         
+       - name: Show RT Servers and Set default 
+         run: /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf c use setup-jfrog-cli-server
 
-      - name: Setup JFrog CLI
-        uses: jfrog/setup-jfrog-cli@v4.5.6
-        env:
-          JF_URL: ${{ secrets.CLOUD_JF_URL }}
-        with:
-          oidc-provider-name: ${{ env.OIDC_PROVIDER }}
-          oidc-audience: ${{ env.OIDC_AUDIENCE }}
-
-      - name: Exchange GitHub token for Artifactory token
-        run: |
-          ACCESS_TOKEN=$(jf rt curl -X POST /access/api/v1/oidc/token \
-            -H "Content-Type: application/json" \
-            -d "{\"grant_type\":\"urn:ietf:params:oauth:grant-type:token-exchange\",\"subject_token_type\":\"urn:ietf:params:oauth:token-type:id_token\",\"subject_token\":\"$ID_TOKEN\",\"provider_name\":\"$OIDC_PROVIDER\"}" \
-            | jq -r '.access_token')
-
-          echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
-          echo "ACCESS_TOKEN=$ACCESS_TOKEN"
-        env:
-          ID_TOKEN: ${{ env.ID_TOKEN }}
-          OIDC_PROVIDER: ${{ env.OIDC_PROVIDER }}
-
-      - name: Set CLI Config
-        run: jf npm-config --repo-resolve=$PLATFORM_REPO --repo-deploy=$PLATFORM_REPO --server-id-resolve setup-jfrog-cli-server --server-id-deploy setup-jfrog-cli-server 
-
-      - name: Show RT Servers and Set default
-        run: jf c use setup-jfrog-cli-server
-
-      - name: Show CLI servers
-        run: jf c s
-
-      - name: Install Dependencies
-        run: jf npm install
-
-      - name: Publish
-        run: jf npm publish
-
-      - name: Publish Build info With JFrog CLI
-        run: |
-          jf rt build-collect-env
-          jf rt build-add-git
-          jf rt build-publish
+       - name: Show CLI servers
+         run: /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf c s
+           
+       - name: Install Dependencies
+         run: /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm install
+         
+       - name: Publish
+         run: /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm publish
+         
+       - name: Publish Build info With JFrog CLI
+         run: |
+          # Collect environment variables for the build
+          /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-collect-env
+          # Collect VCS details from git and add them to the build
+          /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-add-git
+          # Publish build info
+          /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-publish
