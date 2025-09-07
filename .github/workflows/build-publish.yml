@@ -47,7 +47,24 @@ jobs:
            JF_URL: ${{ secrets.CLOUD_JF_URL }}
          with:
            oidc-provider-name: ${{ env.OIDC_PROVIDER }}
-           oidc-audience: ${{ env.OIDC_AUDIENCE }}           
+           oidc-audience: ${{ env.OIDC_AUDIENCE }} 
+           
+       - name: Exchange GitHub token for Artifactory token (inspect with jf CLI)
+         run: |
+           echo "Exchanging GitHub OIDC ID token for Artifactory token..."
+    
+           # call Artifactory OIDC token endpoint- (not needed;calling to view the response body)
+           jf rt curl -X POST /access/api/v1/oidc/token \
+             -d "{
+                   \"grant_type\":\"urn:ietf:params:oauth:grant-type:token-exchange\",
+                   \"subject_token_type\":\"urn:ietf:params:oauth:token-type:id_token\",
+                   \"subject_token\":\"$ID_TOKEN\",
+                   \"provider_name\":\"$OIDC_PROVIDER\"
+                 }" | jq '.'
+  env:
+    ID_TOKEN: ${{ env.ID_TOKEN }}
+    OIDC_PROVIDER: ${{ env.OIDC_PROVIDER }}
+
 
        - name: Set CLI Config
          run: /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm-config --repo-resolve=$PLATFORM_REPO --repo-deploy=$PLATFORM_REPO --server-id-resolve setup-jfrog-cli-server --server-id-deploy setup-jfrog-cli-server 
