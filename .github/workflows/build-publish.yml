@@ -30,7 +30,12 @@ jobs:
             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=$OIDC_AUDIENCE" | jq -r .value)
           echo "ID_TOKEN=$ID_TOKEN" >> $GITHUB_ENV
           # Decode JWT payload to inspect claims
-          PAYLOAD=$(echo "$ID_TOKEN" | cut -d '.' -f2 | base64 -D | jq .)
+          PAYLOAD=$(echo "$ID_TOKEN" \
+            | cut -d '.' -f2 \
+            | tr '_-' '/+' \
+            | awk '{ l=length($0)%4; if (l>0) print $0 substr("====",1,4-l); else print $0; }' \
+            | base64 -D \
+            | jq .)
           echo "Decoded OIDC claims:"
           echo "$PAYLOAD"
         env:
