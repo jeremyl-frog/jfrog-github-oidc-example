@@ -31,13 +31,10 @@ jobs:
 
           echo "ID_TOKEN=$ID_TOKEN" >> $GITHUB_ENV
 
-          # Decode JWT payload (base64url safe)
-          PAYLOAD=$(echo "$ID_TOKEN" | cut -d '.' -f2 | tr '_-' '/+' | base64 --decode 2>/dev/null)
-          echo "Decoded JWT payload:"
-          echo "$PAYLOAD"
-
-          # Optional: parse JSON safely
-          echo "$PAYLOAD" | jq '.' || echo "Payload not valid JSON or has padding issues"
+          # Decode JWT payload to inspect claims
+           PAYLOAD=$(echo "$ID_TOKEN" | cut -d '.' -f2 | base64 --decode | jq '.')
+           echo "Decoded OIDC claims:"
+           echo "$PAYLOAD"
         env:
           OIDC_AUDIENCE: ${{ env.OIDC_AUDIENCE }}
 
