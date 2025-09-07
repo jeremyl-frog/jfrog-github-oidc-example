@@ -61,9 +61,9 @@ jobs:
                    \"subject_token\":\"$ID_TOKEN\",
                    \"provider_name\":\"$OIDC_PROVIDER\"
                  }" | jq '.'
-  env:
-    ID_TOKEN: ${{ env.ID_TOKEN }}
-    OIDC_PROVIDER: ${{ env.OIDC_PROVIDER }}
+        env:
+          ID_TOKEN: ${{ env.ID_TOKEN }}
+          OIDC_PROVIDER: ${{ env.OIDC_PROVIDER }}
 
 
        - name: Set CLI Config
