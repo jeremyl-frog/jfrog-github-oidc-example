@@ -24,13 +24,18 @@ jobs:
        - name: Setup Node npm
          uses: actions/setup-node@v3
 
-       - name: Inspect GitHub OIDC token
+       - name: Get and inspect OIDC token
          run: |
-           TOKEN=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-             "$ACTIONS_ID_TOKEN_REQUEST_URL?audience=$OIDC_AUDIENCE")
-           echo "Raw OIDC token:"
-           echo "$TOKEN"
-           PAYLOAD=$(echo $TOKEN | cut -d '.' -f2 | base64 --decode | jq '.')
+           # Fetch token from GitHub OIDC endpoint
+           ID_TOKEN=$(curl -sLS -H "User-Agent: actions/oidc-client" \
+             -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=$OIDC_AUDIENCE" | jq -r .value)
+           
+           # Save token to environment variable for later steps
+           echo "ID_TOKEN=$ID_TOKEN" >> $GITHUB_ENV
+           
+           # Decode JWT payload to inspect claims
+           PAYLOAD=$(echo "$ID_TOKEN" | cut -d '.' -f2 | base64 --decode | jq '.')
            echo "Decoded OIDC claims:"
            echo "$PAYLOAD"
          env:
