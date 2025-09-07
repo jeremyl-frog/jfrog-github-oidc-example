@@ -56,9 +56,6 @@ jobs:
       - name: Show RT Servers and Set default
         run: jf c use setup-jfrog-cli-server
 
-      - name: Wait before install
-        run: sleep 2
-
       - name: Install Dependencies
         run: jf npm install
 
