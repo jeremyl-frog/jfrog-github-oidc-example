@@ -50,22 +50,19 @@ jobs:
       - name: Exchange GitHub token for Artifactory token (inspect with jf CLI)
         run: |
           echo "Exchanging GitHub OIDC ID token for Artifactory token..."
+
           # Save the JSON payload to a temp file to avoid shell quoting issues
           cat <<EOF > payload.json
-      {
-        "grant_type": "urn:ietf:params:oauth:grant-type:token-exchange",
-        "subject_token_type": "urn:ietf:params:oauth:token-type:id_token",
-        "subject_token": "$ID_TOKEN",
-        "provider_name": "$OIDC_PROVIDER"
-      }
-      EOF
-          jf rt curl -X POST /access/api/v1/oidc/token \
-            -d "{
-                  \"grant_type\":\"urn:ietf:params:oauth:grant-type:token-exchange\",
-                  \"subject_token_type\":\"urn:ietf:params:oauth:token-type:id_token\",
-                  \"subject_token\":\"$ID_TOKEN\",
-                  \"provider_name\":\"$OIDC_PROVIDER\"
-                }" | jq '.'
+{
+  "grant_type": "urn:ietf:params:oauth:grant-type:token-exchange",
+  "subject_token_type": "urn:ietf:params:oauth:token-type:id_token",
+  "subject_token": "$ID_TOKEN",
+  "provider_name": "$OIDC_PROVIDER"
+}
+EOF
+
+          # Call Artifactory OIDC token endpoint and inspect response
+          jf rt curl -X POST /access/api/v1/oidc/token -d @payload.json | jq '.'
         env:
           ID_TOKEN: ${{ env.ID_TOKEN }}
           OIDC_PROVIDER: ${{ env.OIDC_PROVIDER }}
