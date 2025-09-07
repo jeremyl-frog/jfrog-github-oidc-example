@@ -33,25 +33,25 @@ jobs:
            oidc-audience: ${{ env.OIDC_AUDIENCE }}           
 
        - name: Set CLI Config
-         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm-config --repo-resolve=$PLATFORM_REPO --repo-deploy=$PLATFORM_REPO --server-id-resolve setup-jfrog-cli-server --server-id-deploy setup-jfrog-cli-server 
+         run: /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm-config --repo-resolve=$PLATFORM_REPO --repo-deploy=$PLATFORM_REPO --server-id-resolve setup-jfrog-cli-server --server-id-deploy setup-jfrog-cli-server 
          
        - name: Show RT Servers and Set default 
-         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf c use setup-jfrog-cli-server
+         run: /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf c use setup-jfrog-cli-server
 
        - name: Show CLI servers
-         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf c s
+         run: /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf c s
            
        - name: Install Dependencies
-         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm install
+         run: /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm install
          
        - name: Publish
-         run: /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm publish
+         run: /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf npm publish
          
        - name: Publish Build info With JFrog CLI
          run: |
           # Collect environment variables for the build
-          /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-collect-env
+          /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-collect-env
           # Collect VCS details from git and add them to the build
-          /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-add-git
+          /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-add-git
           # Publish build info
-          /Users/jeremyl/Installers/actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-publish
+          /Users/jeremyl/Desktop/Projects/github-actions-runner/_work/_tool/jf/2.73.0/arm64/jf rt build-publish
