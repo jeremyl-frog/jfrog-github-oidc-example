@@ -44,7 +44,7 @@ jobs:
         env:
           ID_TOKEN: ${{ env.ID_TOKEN }}
         run: |
-          ACCESS_TOKEN=$(curl -sLS -X POST "$JF_URL/token" \
+          ACCESS_TOKEN=$(curl -sLS -X POST "$JF_URL/access/api/v1/oidc/token" \
             -H "Content-Type: application/json" \
             -d "{
               \"grant_type\": \"urn:ietf:params:oauth:grant-type:token-exchange\",
