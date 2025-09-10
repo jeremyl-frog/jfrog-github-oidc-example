@@ -1,4 +1,4 @@
-name: "JFrog-GitHub OIDC Integration"
+name: "JFrog-GitHub OIDC POC via REST"
 on:
   workflow_dispatch:
 
