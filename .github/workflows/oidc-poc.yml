@@ -27,8 +27,8 @@ jobs:
             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=$OIDC_AUDIENCE" \
             | jq -r .value)
                     
-          echo "Token String:"
-          echo "$ID_TOKEN"
+          echo "Token String > /tmp/token.txt"
+          echo "$ID_TOKEN" > /tmp/token.txt
           echo "ID_TOKEN=$ID_TOKEN" >> $GITHUB_ENV
 
           # Decode JWT payload to inspect claims
