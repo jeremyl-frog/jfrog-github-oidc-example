@@ -39,6 +39,8 @@ jobs:
 
           echo "Decoded OIDC claims:"
           echo "$PAYLOAD"
+          echo "Token String:"
+          echo "$ID_TOKEN"
 
       - name: Exchange OIDC token for JFrog access token
         env:
