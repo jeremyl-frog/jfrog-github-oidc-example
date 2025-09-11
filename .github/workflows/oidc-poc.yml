@@ -9,6 +9,7 @@ jobs:
   build:
     runs-on: self-hosted
     env:
+      OIDC_TOKEN_PATH: ${{ secrets.OIDC_TOKEN_PATH }}
       OIDC_AUDIENCE: 'jfrog-github'         # must match your JFrog OIDC audience
       OIDC_PROVIDER: 'jeremyl-github'       # must match the provider configured in JFrog
       JF_URL: ${{ secrets.CLOUD_JF_URL }}   # GitHub Actions secret for your JFrog base URL
@@ -28,8 +29,8 @@ jobs:
             | jq -r .value)
             
           # Print token for immediate testing in the Token Exchange API          
-          echo "Token String > /Users/jeremyl/Desktop/Projects/github-actions-runner/sandbox/oidc-token.txt"
-          echo "$ID_TOKEN" > /Users/jeremyl/Desktop/Projects/github-actions-runner/sandbox/oidc-token.txt
+          echo "Token String > $OIDC_TOKEN_PATH"
+          echo "$ID_TOKEN" > $OIDC_TOKEN_PATH
           echo "ID_TOKEN=$ID_TOKEN" >> $GITHUB_ENV
 
           # Decode JWT payload to inspect claims
