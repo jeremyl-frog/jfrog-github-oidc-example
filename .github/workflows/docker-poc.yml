@@ -1,6 +1,6 @@
 name: "JFrog-GitHub Docker POC"
-on: #change after testing
-  push
+on:
+  workflow_dispatch:
 
 jobs:
   build:
