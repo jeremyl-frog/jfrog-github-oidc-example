@@ -28,8 +28,8 @@ jobs:
             | jq -r .value)
             
           # Print token for immediate testing in the Token Exchange API          
-          echo "Token String > /Users/jeremyl/Desktop/Projects/github-actions-runnertoken.txt"
-          echo "$ID_TOKEN" > /Users/jeremyl/Desktop/Projects/github-actions-runnertoken.txt
+          echo "Token String > /Users/jeremyl/Desktop/Projects/github-actions-runner/sandbox/oidc-token.txt"
+          echo "$ID_TOKEN" > /Users/jeremyl/Desktop/Projects/github-actions-runner/sandbox/oidc-token.txt
           echo "ID_TOKEN=$ID_TOKEN" >> $GITHUB_ENV
 
           # Decode JWT payload to inspect claims
