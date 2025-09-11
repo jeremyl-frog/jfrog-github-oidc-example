@@ -1,0 +1,27 @@
+name: "JFrog-GitHub Docker POC"
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: self-hosted
+    env:
+      JF_URL: ${{ secrets.CLOUD_JF_URL }}   # Artifactory base URL
+      JF_REPO: 'jl-docker-local'            # Docker repo key
+      IMAGE_NAME: 'github-test'             # Docker image name
+      JF_USER: ${{ secrets.JF_USER }}       # Artifactory username
+      JF_API_KEY: ${{ secrets.JF_USER_TOKEN }} # Artifactory Indentity/Reference Token
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t $JF_URL/$JF_REPO/$IMAGE_NAME .
+
+      - name: Docker login
+        run: echo $JF_USER_TOKEN | docker login $JF_URL --username $JF_USER --password-stdin
+
+      - name: Push Docker image
+        run: docker push $JF_URL/$JF_REPO/$IMAGE_NAME
