@@ -18,7 +18,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          sudo docker build -t $JF_URL/$JF_REPO/$IMAGE_NAME .
+          sudo docker build -t $JF_URL/$JF_REPO/$IMAGE_NAME -f docker/Dockerfile docker/
 
       - name: Docker login
         run: echo $JF_USER_TOKEN | sudo docker login $JF_URL --username $JF_USER --password-stdin
