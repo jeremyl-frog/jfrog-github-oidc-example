@@ -10,7 +10,7 @@ jobs:
       JF_REPO: 'jl-docker-local'            # Docker repo key
       IMAGE_NAME: 'github-test'             # Docker image name
       JF_USER: ${{ secrets.JF_USER }}       # Artifactory username
-      JF_API_KEY: ${{ secrets.JF_USER_TOKEN }} # Artifactory Indentity/Reference Token
+      JF_USER_TOKEN: ${{ secrets.JF_USER_TOKEN }} # Artifactory Indentity/Reference Token
 
     steps:
       - name: Checkout
