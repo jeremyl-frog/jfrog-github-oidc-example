@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: self-hosted
     env:
-      JF_URL: ${{ secrets.JF_URL }}         # Artifactory domain name
+      JF_URL: ${{ secrets.JF_URL }}         # Artifactory domain name (should be without http prefix)
       JF_REPO: 'jl-docker-local'            # Docker repo key
       IMAGE_NAME: 'github-test'             # Docker image name
       JF_USER: ${{ secrets.JF_USER }}       # Artifactory username
