@@ -58,7 +58,20 @@ jobs:
             }" \
             | jq -r .access_token)
 
-          echo "$ACCESS_TOKEN" > /Users/jeremyl/Desktop/Projects/github-actions-runner/sandbox/access-token.txt
+          # --- Decode the access token and save to file ---
+          PAYLOAD=$(echo "$ACCESS_TOKEN" | cut -d '.' -f2)
+          decode_base64url() {
+            local input=$1
+            input=$(echo "$input" | sed 's/-/+/g; s/_/\//g')
+            padding_length=$((4 - ${#input} % 4))
+            if [ $padding_length -lt 4 ]; then
+              input="${input}$(printf '====' | cut -c1-$padding_length)"
+            fi
+            echo "$input" | base64 --decode 2>/dev/null
+          }
+          DECODED_PAYLOAD=$(decode_base64url "$PAYLOAD" | jq .)
+          echo "$DECODED_PAYLOAD" > /Users/jeremyl/Desktop/Projects/github-actions-runner/sandbox/access-token-decoded.txt
+          echo "Decoded access token written to sandbox/access-token-decoded.txt" 
           echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
           # echo "::add-mask::$ACCESS_TOKEN"
 
