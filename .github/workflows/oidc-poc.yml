@@ -60,7 +60,7 @@ jobs:
 
           echo "$ACCESS_TOKEN" > /Users/jeremyl/Desktop/Projects/github-actions-runner/sandbox/access-token.txt
           echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
-          echo "::add-mask::$ACCESS_TOKEN"
+          # echo "::add-mask::$ACCESS_TOKEN"
 
       - name: Create dummy artifact
         run: echo "hello jfrog" > oidc-poc
