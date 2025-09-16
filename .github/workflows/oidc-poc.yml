@@ -14,6 +14,7 @@ jobs:
       OIDC_PROVIDER: 'jl-github-ci'         # must match the provider configured in JFrog
       JF_URL: ${{ secrets.CLOUD_JF_URL }}   # GitHub Actions secret for your JFrog base URL
       JF_REPO: 'jl-local'                   # your Artifactory repo key
+      TOKEN_PAYLOAD_PATH: ${{ secrets.ACCESS_TOKEN_PAYLOAD_PATH }}
 
     steps:
       - name: Checkout
@@ -70,7 +71,7 @@ jobs:
             echo "$input" | base64 --decode 2>/dev/null
           }
           DECODED_PAYLOAD=$(decode_base64url "$PAYLOAD" | jq .)
-          echo "$DECODED_PAYLOAD" > /Users/jeremyl/Desktop/Projects/github-actions-runner/sandbox/access-token-decoded.txt
+          echo "$DECODED_PAYLOAD" > $TOKEN_PAYLOAD_PATH
           echo "Decoded access token written to sandbox/access-token-decoded.txt" 
           echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
           echo "::add-mask::$ACCESS_TOKEN"
