@@ -69,23 +69,24 @@ jobs:
       - name: Collect environment info
         run: jf rt build-collect-env ${{ env.BUILD_NAME }} ${{ env.BUILD_NUMBER }}
 
-      - name: Capture committer name
+      - name: Capture committer and github actor name
         run: |
           COMMITTER=$(git log -1 --pretty=format:'%an' | tr ' ' '_')
           echo "Committer: $COMMITTER"
           echo "COMMITTER=$COMMITTER" >> $GITHUB_ENV
+          echo "GITHUB_ACTOR=${{ github.actor }}" >> $GITHUB_ENV
 
       - name: NPM publish
         run: jf npm publish --build-name ${{ env.BUILD_NAME }} --build-number ${{ env.BUILD_NUMBER }}
 
-      - name: Set deployed-by property on artifact
+      - name: Add deployed-by and github-actor properties
         run: |
           PACKAGE_NAME=$(jq -r .name package.json)
           PACKAGE_VERSION=$(jq -r .version package.json)
           # NPM repo format: <repo>/<package-name>/-/<package-name>-<version>.tgz
           ARTIFACT_PATH="$PLATFORM_REPO/$PACKAGE_NAME/-/$PACKAGE_NAME-$PACKAGE_VERSION.tgz"
           echo "Artifact Path: $ARTIFACT_PATH"
-          jf rt sp "$ARTIFACT_PATH" "deployed-by=${COMMITTER}"
+          jf rt sp "$ARTIFACT_PATH" "deployed-by=${COMMITTER};github-actor=${GITHUB_ACTOR}"
 
       - name: Publish Build Info to Artifactory
         run: jf rt build-publish ${{ env.BUILD_NAME }} ${{ env.BUILD_NUMBER }}
@@ -99,3 +100,6 @@ jobs:
       #    jf rt build-collect-env
       #    jf rt build-add-git
       #    jf rt build-publish
+      # Pro Tip:
+      # Use ${{ ... }} only in YAML, when GitHub Actions needs to interpolate workflow or secret variables.
+      # Use $VAR inside run: blocks, after exporting anything to the environment.
