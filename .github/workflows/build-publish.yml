@@ -59,7 +59,9 @@ jobs:
           echo "Using repo: $PLATFORM_REPO"
 
       - name: Show RT Servers and Set default
-        run: jf c use setup-jfrog-cli-server
+        run: |
+          jf c use setup-jfrog-cli-server
+          jf c show setup-jfrog-cli-server
 
       - name: Install NPM dependencies
         run: jf npm i --ignore-scripts --build-name ${{ env.BUILD_NAME }} --build-number ${{ env.BUILD_NUMBER }}
