@@ -64,8 +64,7 @@ jobs:
       - name: Publish with deployed-by property
         run: |
           COMMITTER=$(git log -1 --pretty=format:'%an')
-          jf rt u "package/*.tgz" "$PLATFORM_REPO/" \
-            --props "deployed-by=${COMMITTER}"
+          jf rt u "package/*.tgz" "$PLATFORM_REPO/" --props "deployed-by=${COMMITTER}"
 
       - name: Publish Build info With JFrog CLI
         run: |
