@@ -16,7 +16,7 @@ jobs:
     env:
       OIDC_AUDIENCE: 'frog-company'
       OIDC_PROVIDER: 'jeremyl-frog'
-      RELEASE_REPO: 'jl-npm-releases'   # Virtual that aggregates jl-npm-releases-local & npm-remote 
+      RELEASE_REPO: 'jl-npm-releases'   # Virtual that aggregates jl-npm-releases-local & npm-remote
       DEV_REPO: 'jl-npm-dev'            # Virtual that aggregates jl-npm-dev-local & npm-remote
       JF_URL: ${{ secrets.CLOUD_JF_URL }}
     defaults:
@@ -61,13 +61,18 @@ jobs:
       - name: Install Dependencies
         run: jf npm install
 
-      - name: Publish with deployed-by property
+      - name: Capture committer name
         run: |
           COMMITTER=$(git log -1 --pretty=format:'%an')
-          jf rt u package/*.tgz $PLATFORM_REPO --props=deployed-by="${COMMITTER}"
+          echo "Committer: $COMMITTER"
+          echo "COMMITTER=$COMMITTER" >> $GITHUB_ENV
+
+      - name: Publish with deployed-by property
+        run: jf rt u package/*.tgz $PLATFORM_REPO --props=deployed-by=${{ env.COMMITTER }}
 
       - name: Publish Build info With JFrog CLI
         run: |
           jf rt build-collect-env
           jf rt build-add-git
           jf rt build-publish
+
