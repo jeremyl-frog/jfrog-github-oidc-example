@@ -1,6 +1,11 @@
 name: "JFrog-GitHub NPM Publish OIDC Integration"
+
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - dev-FB-oidc-poc
+      - main
 
 permissions:
   id-token: write
@@ -9,39 +14,21 @@ jobs:
   build:
     runs-on: self-hosted
     env:
-      OIDC_AUDIENCE: 'jfrog-github'
-      OIDC_PROVIDER: 'jeremyl-github'
-      PLATFORM_REPO: 'eks-npm'
+      OIDC_AUDIENCE: 'frog-company'
+      OIDC_PROVIDER: 'jeremyl-frog'
+      RELEASE_REPO: 'jl-npm-releases-local'
+      DEV_REPO: 'jl-npm-dev-local'
       JF_URL: ${{ secrets.CLOUD_JF_URL }}
     defaults:
       run:
         working-directory: ./package
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Setup Node npm
         uses: actions/setup-node@v3
-
-      - name: Get and inspect GitHub OIDC token
-        run: |
-          # Fetch GitHub OIDC token
-          ID_TOKEN=$(curl -sLS -H "User-Agent: actions/oidc-client" \
-            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=$OIDC_AUDIENCE" | jq -r .value)
-          echo "ID_TOKEN=$ID_TOKEN" >> $GITHUB_ENV
-          # Decode JWT payload to inspect claims
-          PAYLOAD=$(echo "$ID_TOKEN" \
-            | cut -d '.' -f2 \
-            | tr '_-' '/+' \
-            | awk '{ l=length($0)%4; if (l>0) print $0 substr("====",1,4-l); else print $0; }' \
-            | base64 -D \
-            | jq .)
-          echo "Decoded OIDC claims:"
-          echo "$PAYLOAD"
-        env:
-          OIDC_AUDIENCE: ${{ env.OIDC_AUDIENCE }}
-
 
       - name: Setup JFrog CLI
         uses: jfrog/setup-jfrog-cli@v4.5.6
@@ -51,8 +38,22 @@ jobs:
         env:
           JF_URL: ${{ env.JF_URL }}
 
+      - name: Determine target repo
+        id: repo
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            echo "PLATFORM_REPO=${{ env.RELEASE_REPO }}" >> $GITHUB_ENV
+          else
+            echo "PLATFORM_REPO=${{ env.DEV_REPO }}" >> $GITHUB_ENV
+          fi
+
       - name: Set CLI Config
-        run: jf npm-config --repo-resolve=$PLATFORM_REPO --repo-deploy=$PLATFORM_REPO --server-id-resolve setup-jfrog-cli-server --server-id-deploy setup-jfrog-cli-server 
+        run: |
+          jf npm-config \
+            --repo-resolve=$PLATFORM_REPO \
+            --repo-deploy=$PLATFORM_REPO \
+            --server-id-resolve setup-jfrog-cli-server \
+            --server-id-deploy setup-jfrog-cli-server
 
       - name: Show RT Servers and Set default
         run: jf c use setup-jfrog-cli-server
@@ -60,8 +61,11 @@ jobs:
       - name: Install Dependencies
         run: jf npm install
 
-      - name: Publish
-        run: jf npm publish
+      - name: Publish with deployed-by property
+        run: |
+          COMMITTER=$(git log -1 --pretty=format:'%an')
+          jf rt u "package/*.tgz" "$PLATFORM_REPO/" \
+            --props "deployed-by=${COMMITTER}"
 
       - name: Publish Build info With JFrog CLI
         run: |
