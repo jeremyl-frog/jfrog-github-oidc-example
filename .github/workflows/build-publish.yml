@@ -61,7 +61,7 @@ jobs:
         run: jf c use setup-jfrog-cli-server
 
       - name: Install NPM dependencies
-        run: jf npm ci --ignore-scripts --build-name ${{ env.BUILD_NAME }} --build-number ${{ env.BUILD_NUMBER }}
+        run: jf npm i --ignore-scripts --build-name ${{ env.BUILD_NAME }} --build-number ${{ env.BUILD_NUMBER }}
 
       - name: Add Git data to Build Info
         run: jf rt build-add-git ${{ env.BUILD_NAME }} ${{ env.BUILD_NUMBER }}
