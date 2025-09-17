@@ -45,9 +45,8 @@ jobs:
             echo "PLATFORM_REPO=${{ env.RELEASE_REPO }}" >> $GITHUB_ENV
           else
             echo "PLATFORM_REPO=${{ env.DEV_REPO }}" >> $GITHUB_ENV
-          fi
 
-      - name: Set CLI Config
+      - name: Set CLI Config (dependency resolution only)
         run: |
           jf npm-config \
             --repo-resolve=$PLATFORM_REPO \
@@ -58,8 +57,14 @@ jobs:
       - name: Show RT Servers and Set default
         run: jf c use setup-jfrog-cli-server
 
-      - name: Install Dependencies
-        run: jf npm install
+      - name: Install NPM dependencies
+        run: jf npm ci --ignore-scripts --build-name ${{ env.BUILD_NAME }} --build-number ${{ env.BUILD_NUMBER }}
+
+      - name: Add Git data to Build Info
+        run: jf rt build-add-git ${{ env.BUILD_NAME }} ${{ env.BUILD_NUMBER }}
+
+      - name: Collect environment info
+        run: jf rt build-collect-env ${{ env.BUILD_NAME }} ${{ env.BUILD_NUMBER }}
 
       - name: Capture committer name
         run: |
@@ -67,12 +72,27 @@ jobs:
           echo "Committer: $COMMITTER"
           echo "COMMITTER=$COMMITTER" >> $GITHUB_ENV
 
-      - name: Publish with deployed-by property
-        run: jf rt u *.tgz ${{ env.PLATFORM_REPO }}/ --target-props=deployed-by=${{ env.COMMITTER }}
+      - name: NPM publish
+        run: jf npm publish --build-name ${{ env.BUILD_NAME }} --build-number ${{ env.BUILD_NUMBER }}
 
-      - name: Publish Build info With JFrog CLI
+      - name: Set deployed-by property on artifact
         run: |
-          jf rt build-collect-env
-          jf rt build-add-git
-          jf rt build-publish
+          PACKAGE_NAME=$(jq -r .name package.json)
+          PACKAGE_VERSION=$(jq -r .version package.json)
+          # NPM repo format: <repo>/<package-name>/-/<package-name>-<version>.tgz
+          ARTIFACT_PATH="$PLATFORM_REPO/$PACKAGE_NAME/-/$PACKAGE_NAME-$PACKAGE_VERSION.tgz"
+          echo "Artifact Path: $ARTIFACT_PATH"
+          jf rt sp "$ARTIFACT_PATH" "deployed-by=${COMMITTER}"
 
+      - name: Publish Build Info to Artifactory
+        run: jf rt build-publish ${{ env.BUILD_NAME }} ${{ env.BUILD_NUMBER }}
+
+      # Alternative for other package types, jf rt upload (attaching properties on deployment) and build info steps 
+      #- name: Publish with deployed-by property
+      #  run: jf rt u <filename> ${{ env.PLATFORM_REPO }}/ --target-props=deployed-by=${{ env.COMMITTER }}
+
+      #- name: Publish Build info With JFrog CLI
+      #  run: |
+      #    jf rt build-collect-env
+      #    jf rt build-add-git
+      #    jf rt build-publish
