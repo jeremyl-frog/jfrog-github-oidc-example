@@ -19,6 +19,8 @@ jobs:
       RELEASE_REPO: 'jl-npm-releases'   # Virtual that aggregates jl-npm-releases-local & npm-remote
       DEV_REPO: 'jl-npm-dev'            # Virtual that aggregates jl-npm-dev-local & npm-remote
       JF_URL: ${{ secrets.CLOUD_JF_URL }}
+      BUILD_NAME: oidc-npm-publish-example
+      BUILD_NUMBER: ${{ github.run_number }}
     defaults:
       run:
         working-directory: ./package
