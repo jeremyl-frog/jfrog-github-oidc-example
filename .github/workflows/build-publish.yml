@@ -42,9 +42,10 @@ jobs:
         id: repo
         run: |
           if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-            echo "PLATFORM_REPO=${{ env.RELEASE_REPO }}" >> $GITHUB_ENV
+            echo "PLATFORM_REPO=${RELEASE_REPO}" >> $GITHUB_ENV
           else
-            echo "PLATFORM_REPO=${{ env.DEV_REPO }}" >> $GITHUB_ENV
+            echo "PLATFORM_REPO=${DEV_REPO}" >> $GITHUB_ENV
+          fi
 
       - name: Set CLI Config (dependency resolution only)
         run: |
