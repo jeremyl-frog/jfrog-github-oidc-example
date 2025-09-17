@@ -63,12 +63,12 @@ jobs:
 
       - name: Capture committer name
         run: |
-          COMMITTER=$(git log -1 --pretty=format:'%an')
+          COMMITTER=$(git log -1 --pretty=format:'%an' | tr ' ' '_')
           echo "Committer: $COMMITTER"
           echo "COMMITTER=$COMMITTER" >> $GITHUB_ENV
 
       - name: Publish with deployed-by property
-        run: jf rt u package/*.tgz ${{ env.PLATFORM_REPO }}/ --props="deployed-by=${{ env.COMMITTER }}"
+        run: jf rt u package/*.tgz ${{ env.PLATFORM_REPO }}/ --props=deployed-by=${{ env.COMMITTER }}
 
       - name: Publish Build info With JFrog CLI
         run: |
