@@ -11,7 +11,7 @@ jobs:
     env:
       OIDC_TOKEN_PATH: ${{ secrets.OIDC_TOKEN_PATH }}
       OIDC_AUDIENCE: 'frog-company'         # must match your JFrog OIDC audience
-      OIDC_PROVIDER: 'jeremyl-frog'         # must match the provider configured in JFrog
+      OIDC_PROVIDER: 'jeremyl-github'         # must match the provider configured in JFrog
       JF_URL: ${{ secrets.CLOUD_JF_URL }}   # GitHub Actions secret for your JFrog base URL
       JF_REPO: 'jl-ci-releases'             # your Artifactory repo key
       TOKEN_PAYLOAD_PATH: ${{ secrets.ACCESS_TOKEN_PAYLOAD_PATH }}
