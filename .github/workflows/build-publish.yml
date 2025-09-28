@@ -2,10 +2,10 @@ name: "JFrog-GitHub NPM Publish OIDC Integration"
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - dev-FB-oidc-poc
-      - main
+  # push:
+    # branches:
+      # - dev-FB-oidc-poc
+      # - main
 
 permissions:
   id-token: write
