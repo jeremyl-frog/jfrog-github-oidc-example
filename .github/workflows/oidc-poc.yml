@@ -10,7 +10,7 @@ jobs:
     runs-on: self-hosted
     env:
       OIDC_TOKEN_PATH: ${{ secrets.OIDC_TOKEN_PATH }}
-      OIDC_AUDIENCE: 'frog-company'         # must match your JFrog OIDC audience
+      OIDC_AUDIENCE: 'jfrog-github'         # must match your JFrog OIDC audience
       OIDC_PROVIDER: 'jeremyl-github'         # must match the provider configured in JFrog
       JF_URL: ${{ secrets.CLOUD_JF_URL }}   # GitHub Actions secret for your JFrog base URL
       JF_REPO: 'jl-ci-releases'             # your Artifactory repo key
